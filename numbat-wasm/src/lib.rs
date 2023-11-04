@@ -1,3 +1,5 @@
+mod buffered_writer;
+mod html_formatter;
 mod jquery_terminal_formatter;
 mod utils;
 
@@ -6,7 +8,9 @@ use numbat::module_importer::BuiltinModuleImporter;
 use std::sync::{Arc, Mutex};
 use wasm_bindgen::prelude::*;
 
-use jquery_terminal_formatter::JqueryTerminalFormatter;
+use crate::buffered_writer::BufferedWriter;
+use html_formatter::{HtmlFormatter, HtmlWriter};
+use jquery_terminal_formatter::{JqueryTerminalFormatter, JqueryTerminalWriter};
 
 use numbat::help::help_markup;
 use numbat::markup::Formatter;
@@ -14,8 +18,6 @@ use numbat::pretty_print::PrettyPrint;
 use numbat::resolver::CodeSource;
 use numbat::{markup as m, NameResolutionError, NumbatError};
 use numbat::{Context, InterpreterSettings};
-
-use crate::jquery_terminal_formatter::JqueryTerminalWriter;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -29,8 +31,17 @@ pub fn setup_panic_hook() {
 }
 
 #[wasm_bindgen]
+#[derive(Debug, Clone, Copy)]
+pub enum FormatType {
+    JqueryTerminal,
+    Html,
+}
+
+#[wasm_bindgen]
 pub struct Numbat {
     ctx: Context,
+    enable_pretty_printing: bool,
+    format_type: FormatType,
 }
 
 #[wasm_bindgen]
@@ -50,10 +61,14 @@ impl InterpreterOutput {
 
 #[wasm_bindgen]
 impl Numbat {
-    pub fn new() -> Self {
+    pub fn new(enable_pretty_printing: bool, format_type: FormatType) -> Self {
         let mut ctx = Context::new(BuiltinModuleImporter::default());
         let _ = ctx.interpret("use prelude", CodeSource::Internal).unwrap();
-        Numbat { ctx }
+        Numbat {
+            ctx,
+            enable_pretty_printing,
+            format_type,
+        }
     }
 
     pub fn set_exchange_rates(&mut self, xml_content: &str) {
@@ -69,7 +84,10 @@ impl Numbat {
 
         let registry = self.ctx.dimension_registry().clone();
 
-        let fmt = JqueryTerminalFormatter {};
+        let fmt: Box<dyn Formatter> = match self.format_type {
+            FormatType::JqueryTerminal => Box::new(JqueryTerminalFormatter {}),
+            FormatType::Html => Box::new(HtmlFormatter {}),
+        };
 
         let to_be_printed: Arc<Mutex<Vec<m::Markup>>> = Arc::new(Mutex::new(vec![]));
         let to_be_printed_c = to_be_printed.clone();
@@ -79,28 +97,37 @@ impl Numbat {
             }),
         };
 
+        let nl = &fmt.format(&numbat::markup::nl(), false);
+
+        let enable_indentation = match self.format_type {
+            FormatType::JqueryTerminal => true,
+            FormatType::Html => false,
+        };
+
         match self
             .ctx
             .interpret_with_settings(&mut settings, &code, CodeSource::Text)
         {
             Ok((statements, result)) => {
                 // Pretty print
-                output.push_str("\n");
-                for statement in &statements {
-                    output.push_str(&fmt.format(&statement.pretty_print(), true));
-                    output.push_str("\n");
+                if self.enable_pretty_printing {
+                    output.push_str(nl);
+                    for statement in &statements {
+                        output.push_str(&fmt.format(&statement.pretty_print(), enable_indentation));
+                        output.push_str(nl);
+                    }
+                    output.push_str(nl);
                 }
-                output.push_str("\n");
 
                 // print(…) and type(…) results
                 let to_be_printed = to_be_printed.lock().unwrap();
                 for content in to_be_printed.iter() {
-                    output.push_str(&fmt.format(content, true));
-                    output.push_str("\n");
+                    output.push_str(&fmt.format(content, enable_indentation));
+                    output.push_str(nl);
                 }
 
                 let result_markup = result.to_markup(statements.last(), &registry);
-                output.push_str(&fmt.format(&result_markup, true));
+                output.push_str(&fmt.format(&result_markup, enable_indentation));
 
                 InterpreterOutput {
                     output,
@@ -139,7 +166,10 @@ impl Numbat {
     fn print_diagnostic(&self, error: &dyn ErrorDiagnostic) -> InterpreterOutput {
         use codespan_reporting::term::{self, Config};
 
-        let mut writer = JqueryTerminalWriter::new();
+        let mut writer: Box<dyn BufferedWriter> = match self.format_type {
+            FormatType::JqueryTerminal => Box::new(JqueryTerminalWriter::new()),
+            FormatType::Html => Box::new(HtmlWriter::new()),
+        };
         let config = Config::default();
 
         let resolver = self.ctx.resolver();

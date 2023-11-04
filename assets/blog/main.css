@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;700&family=Lustria&family=Lato:wght@700&display=swap');
+
+body {
+    font-family: 'Lustria', serif;
+    line-height: 1.6;
+    font-size: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fefefe;
+    color: #111;
+}
+
+h1, h2, h3 {
+    font-family: 'Lator', sans-serif;
+    color: #3e454c;
+}
+
+h1 {
+    font-size: 1.8em;
+}
+
+p {
+    text-align: justify;
+}
+
+.blog-post {
+    display: flex;
+    flex-direction: column;
+}
+
+code {
+    font-family: 'Fira Mono', monospace;
+    padding-left: 0.1em;
+    padding-right: 0.1em;
+    white-space: nowrap;
+    background-color: #f7f7f7;
+    border-radius: 6px;
+}
+
+.code-editor {
+    font-family: 'Fira Mono', monospace;
+    font-size: 0.85em;
+    border: 1px solid #ddd;
+}
+
+.numbat-output {
+    font-family: 'Fira Mono', monospace;
+    font-size: 0.85em;
+    border: 1px solid #ddd;
+    margin-top: 0.5em;
+    margin-bottom: 1em;
+    padding: 1em;
+    background-color: #f6f8f6;
+}
+
+.numbat-type-identifier {
+    color: #c42b9e;
+}
+
+.ace_type {
+    color: #c42b9e !important;
+}
+
+.numbat-value {
+    color: #0040ff;
+}
+
+.ace_numeric {
+    color: #0040ff !important;
+}
+
+.numbat-keyword {
+    color: #ff3202 !important;
+}
+
+.ace_keyword {
+    color: #ff3202 !important;
+}
+
+.ace_comment {
+    color: #8c8c8c !important;
+}
+
+.ace_string {
+    color: #27a85f !important;
+}
+
+.ace_operator {
+    color: #db2828 !important;
+}
+
+.numbat-unit {
+    color: #32a2ce;
+}
+
+.numbat-dimmed {
+    color: #888;
+}
+
+.numbat-diagnostic-red {
+    color: #cc3b0a;
+}
+
+.numbat-diagnostic-blue {
+    color: #0040ff;
+}
+
+.numbat-diagnostic-bold {
+    font-weight: bold;
+}

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numbat</title>
+    <link rel="stylesheet" href="main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ace.min.js"></script>
+</head>
+<body>
+
+<article class="blog-post">
+    <h1>Numbat — a statically typed language with physical dimensions as types</h1>
+    <p>Numbat is a programming language with a type system that treats <em>physical dimensions</em> as types.
+The type checker infers types for every expression in the program and ensures that everything is correct in terms of physical dimensions &mdash; and therefore also correct in terms of units.
+For example, the expression <code><span class="numbat-value">3</span> <span class="numbat-unit">months</span></code> has a <em>type</em> of <code class="numbat-type-identifier">Time</code>.
+The expression <code><span class="numbat-value">2</span> <span class="numbat-unit">years</span></code> also has a type of <code class="numbat-type-identifier">Time</code>.
+The compound expression <code><span class="numbat-value">3</span> <span class="numbat-unit">months</span> + <span class="numbat-value">2</span> <span class="numbat-unit">years</span></code> is therefore well-typed.<br>
+On the other hand, <code><span class="numbat-value">3</span> <span class="numbat-unit">months</span> + <span class="numbat-value">2</span> <span class="numbat-unit">lightyears</span></code> is <em>ill</em>-typed, because the right-hand side is of type <code class="numbat-type-identifier">Length</code>. Try to change <code class="numbat-unit">years</code> to <code class="numbat-unit">lightyears</code> to see the resulting compiler error:
+    </p>
+
+    <div id="editor1" class="code-editor">3 months + 2 years</div>
+    <pre id="output1" class="numbat-output"></pre>
+
+
+    <!-- <div id="editor2" class="code-editor">2 meter + 3 second</div> -->
+    <!-- <pre id="output2" class="numbat-output"></pre> -->
+
+
+<p>The following program calculates and prints the flow rate in a pipe
+using the Hagen-Poiseuille equation. It assumes the dynamic
+viscosity of water and allows for inputs of pipe radius,
+pipe length, and pressure difference.</p>
+
+    <div id="editor3" class="code-editor">let μ_water: DynamicViscosity = 1 mPa·s
+
+fn flow_rate(radius: Length, length: Length, Δp: Pressure) -&gt; FlowRate =
+    π × radius^4 × Δp / (8 μ_water × length)
+
+let pipe_radius = 1 cm
+let pipe_length = 10 m
+let Δp = 0.1 bar
+
+let q = flow_rate(pipe_radius, pipe_length, Δp)
+
+q × 30 min -&gt; l</div>
+    <pre id="output3" class="numbat-output"></pre>
+
+
+
+</article>
+
+    <script type="module" src="index.js"></script>
+</body>
+</html>
+
