@@ -24,11 +24,26 @@ use rustyline::{
     Validator,
 };
 use rustyline::{EventHandler, Highlighter, KeyCode, KeyEvent, Modifiers};
+use serde::Deserialize;
+use toml;
 
 use std::io::IsTerminal;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use std::{fs, thread};
+
+#[derive(Deserialize)]
+struct Config {
+    #[serde(
+        default = "default_prefetch_exchange_rates",
+        rename = "prefetch-exchange-rates"
+    )]
+    prefetch_exchange_rates: bool,
+}
+
+fn default_prefetch_exchange_rates() -> bool {
+    true
+}
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum ExitStatus {
@@ -141,6 +156,17 @@ impl Cli {
         let load_prelude = !self.args.no_prelude;
         let load_init = !(self.args.no_prelude || self.args.no_init);
 
+        let user_config_path = Self::get_config_path().join("config.toml");
+
+        let config = match toml::from_str::<Config>(
+            &fs::read_to_string(&user_config_path).unwrap_or("".to_string()),
+        ) {
+            Ok(config) => config,
+            Err(_) => {
+                bail!("Failed to read config file")
+            }
+        };
+
         if load_prelude {
             let result = self.parse_and_evaluate(
                 "use prelude",
@@ -176,9 +202,12 @@ impl Cli {
                     .unwrap()
                     .load_currency_module_on_demand(true);
             }
-            thread::spawn(move || {
-                numbat::Context::prefetch_exchange_rates();
-            });
+
+            if config.prefetch_exchange_rates {
+                thread::spawn(move || {
+                    numbat::Context::prefetch_exchange_rates();
+                });
+            }
         }
 
         let pretty_print_mode =
