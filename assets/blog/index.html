@@ -10,21 +10,29 @@
 <body>
 
 <article class="blog-post">
-    <h1>Numbat — a statically typed language with physical dimensions as types</h1>
+    <h1>Introducing Numbat</h1>
+
     <p>Numbat is a programming language with a type system that treats <em>physical dimensions</em> as types.
-The type checker infers types for every expression in the program and ensures that everything is correct in terms of physical dimensions &mdash; and therefore also correct in terms of units.
-For example, the expression <code><span class="numbat-value">3</span> <span class="numbat-unit">months</span></code> has a <em>type</em> of <code class="numbat-type-identifier">Time</code>.
-The expression <code><span class="numbat-value">2</span> <span class="numbat-unit">years</span></code> also has a type of <code class="numbat-type-identifier">Time</code>.
-The compound expression <code><span class="numbat-value">3</span> <span class="numbat-unit">months</span> + <span class="numbat-value">2</span> <span class="numbat-unit">years</span></code> is therefore well-typed.<br>
-On the other hand, <code><span class="numbat-value">3</span> <span class="numbat-unit">months</span> + <span class="numbat-value">2</span> <span class="numbat-unit">lightyears</span></code> is <em>ill</em>-typed, because the right-hand side is of type <code class="numbat-type-identifier">Length</code>. Try to change <code class="numbat-unit">years</code> to <code class="numbat-unit">lightyears</code> to see the resulting compiler error:
+    The type checker infers types for every expression in the program and ensures that everything is correct in terms of physical dimensions &mdash; and therefore also correct in terms of units.
+    For example, the expression <code><span class="numbat-value">3</span> <span class="numbat-unit">months</span></code> has a <em>type</em> of <code class="numbat-type-identifier">Time</code>.
+    The expression <code><span class="numbat-value">2</span> <span class="numbat-unit">years</span></code> also has a type of <code class="numbat-type-identifier">Time</code>.
+    The compound expression <code><span class="numbat-value">3</span> <span class="numbat-unit">months</span> + <span class="numbat-value">2</span> <span class="numbat-unit">years</span></code> is therefore well-typed.<br>
+    On the other hand, <code><span class="numbat-value">3</span> <span class="numbat-unit">months</span> + <span class="numbat-value">2</span> <span class="numbat-unit">lightyears</span></code> is <em>ill</em>-typed, because the right-hand side is of type <code class="numbat-type-identifier">Length</code>. Try to change <code class="numbat-unit">years</code> to <code class="numbat-unit">lightyears</code> in the example below to see the resulting compiler error:
     </p>
 
     <div id="editor1" class="code-editor">3 months + 2 years</div>
     <pre id="output1" class="numbat-output"></pre>
 
+    <p>
+    Basing the type system on physical <em>dimensions</em> instead of physical <em>units</em> has a few advantages. For one, we do not have to change type annotations when switching units.
+    </p>
 
-    <!-- <div id="editor2" class="code-editor">2 meter + 3 second</div> -->
-    <!-- <pre id="output2" class="numbat-output"></pre> -->
+
+    <div id="editor2" class="code-editor">let pendulum_length = 30 cm
+let t_oscillation = 2 pi sqrt(pendulum_length / g0)
+
+print("Oscillation period: {t_oscillation}")</div>
+    <pre id="output2" class="numbat-output"></pre>
 
 
 <p>The following program calculates and prints the flow rate in a pipe
@@ -49,6 +57,12 @@ q × 30 min -&gt; l</div>
 
 
 </article>
+
+
+    <p>
+        Numbat is open source. It is available both as a cross platform command-line application
+        as well as a web version (<a href="https://numbat.dev">http://numbat.dev</a>).
+    </p>
 
     <script type="module" src="index.js"></script>
 </body>

@@ -2,7 +2,7 @@
 
 body {
     font-family: 'Lustria', serif;
-    line-height: 1.6;
+    line-height: 1.4;
     font-size: 20px;
     max-width: 800px;
     margin: 0 auto;
@@ -22,6 +22,7 @@ h1 {
 
 p {
     text-align: justify;
+    hyphens: auto;
 }
 
 .blog-post {
@@ -31,8 +32,8 @@ p {
 
 code {
     font-family: 'Fira Mono', monospace;
-    padding-left: 0.1em;
-    padding-right: 0.1em;
+    padding-left: 0.2em;
+    padding-right: 0.2em;
     white-space: nowrap;
     background-color: #f7f7f7;
     border-radius: 6px;
@@ -55,11 +56,11 @@ code {
 }
 
 .numbat-type-identifier {
-    color: #c42b9e;
+    color: #ef767a;
 }
 
 .ace_type {
-    color: #c42b9e !important;
+    color: #ef767a !important;
 }
 
 .numbat-value {
@@ -71,11 +72,11 @@ code {
 }
 
 .numbat-keyword {
-    color: #ff3202 !important;
+    color: #c802ff !important;
 }
 
 .ace_keyword {
-    color: #ff3202 !important;
+    color: #c802ff!important;
 }
 
 .ace_comment {
@@ -86,12 +87,16 @@ code {
     color: #27a85f !important;
 }
 
+.numbat-string {
+    color: #27a85f;
+}
+
 .ace_operator {
     color: #db2828 !important;
 }
 
 .numbat-unit {
-    color: #32a2ce;
+    color: #7d80da;
 }
 
 .numbat-dimmed {
