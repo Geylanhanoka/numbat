@@ -139,6 +139,11 @@ function setupEditor(id) {
 
   editor.renderer.setPadding(10);
 
+  // Move cursor to the end of the input
+  const count = editor.session.getLength();
+  const lastLine = editor.session.getLine(count - 1);
+  editor.session.selection.moveCursorTo(count - 1, lastLine.length);
+
   function evaluate() {
     numbatEvaluate(editor, output_id);
   }

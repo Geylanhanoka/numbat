@@ -50,9 +50,10 @@ code {
     font-size: 0.85em;
     border: 1px solid #ddd;
     margin-top: 0.5em;
-    margin-bottom: 1em;
+    margin-bottom: 0;
     padding: 1em;
     background-color: #f6f8f6;
+    overflow: auto;
 }
 
 .numbat-type-identifier {
@@ -96,7 +97,7 @@ code {
 }
 
 .numbat-unit {
-    color: #7d80da;
+    color: #5c12a6;
 }
 
 .numbat-dimmed {
@@ -113,4 +114,25 @@ code {
 
 .numbat-diagnostic-bold {
     font-weight: bold;
+}
+
+/* hide cursor when editor is not in focus */
+.ace_hidden-cursors {
+  opacity:0
+}
+
+.ace_mobile-menu { display: none !important }
+
+@media only screen and (max-width: 600px) {
+  body {
+    font-size: 17px;
+  }
+
+  p {
+      text-align: left;
+  }
+
+  code {
+    white-space: normal;
+  }
 }

@@ -82,8 +82,6 @@ impl Numbat {
     pub fn interpret(&mut self, code: &str) -> InterpreterOutput {
         let mut output = String::new();
 
-        let registry = self.ctx.dimension_registry().clone();
-
         let fmt: Box<dyn Formatter> = match self.format_type {
             FormatType::JqueryTerminal => Box::new(JqueryTerminalFormatter {}),
             FormatType::Html => Box::new(HtmlFormatter {}),
@@ -126,7 +124,8 @@ impl Numbat {
                     output.push_str(nl);
                 }
 
-                let result_markup = result.to_markup(statements.last(), &registry);
+                let result_markup =
+                    result.to_markup(statements.last(), &self.ctx.dimension_registry());
                 output.push_str(&fmt.format(&result_markup, enable_indentation));
 
                 InterpreterOutput {

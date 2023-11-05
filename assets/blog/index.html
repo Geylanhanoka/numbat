@@ -10,48 +10,55 @@
 <body>
 
 <article class="blog-post">
-    <h1>Introducing Numbat</h1>
+    <h1>Numbats type system</h1>
 
-    <p>Numbat is a programming language with a type system that treats <em>physical dimensions</em> as types.
-    The type checker infers types for every expression in the program and ensures that everything is correct in terms of physical dimensions &mdash; and therefore also correct in terms of units.
+    <p>Numbat is a programming language that aims to provide a convenient way
+    to perform computations with physical units.
+    One of the main goals of the language is to help users write <em>correct</em> programs.
+
+    Numbat therefore has a static type system where <em>physical dimensions</em> act as types.
     For example, the expression <code><span class="numbat-value">3</span> <span class="numbat-unit">months</span></code> has a <em>type</em> of <code class="numbat-type-identifier">Time</code>.
     The expression <code><span class="numbat-value">2</span> <span class="numbat-unit">years</span></code> also has a type of <code class="numbat-type-identifier">Time</code>.
-    The compound expression <code><span class="numbat-value">3</span> <span class="numbat-unit">months</span> + <span class="numbat-value">2</span> <span class="numbat-unit">years</span></code> is therefore well-typed.<br>
-    On the other hand, <code><span class="numbat-value">3</span> <span class="numbat-unit">months</span> + <span class="numbat-value">2</span> <span class="numbat-unit">lightyears</span></code> is <em>ill</em>-typed, because the right-hand side is of type <code class="numbat-type-identifier">Length</code>. Try to change <code class="numbat-unit">years</code> to <code class="numbat-unit">lightyears</code> in the example below to see the resulting compiler error:
+    The compound expression <code><span class="numbat-value">3</span> <span class="numbat-unit">months</span> + <span class="numbat-value">2</span> <span class="numbat-unit">years</span></code> is therefore well-typed:
     </p>
 
     <div id="editor1" class="code-editor">3 months + 2 years</div>
     <pre id="output1" class="numbat-output"></pre>
 
     <p>
-    Basing the type system on physical <em>dimensions</em> instead of physical <em>units</em> has a few advantages. For one, we do not have to change type annotations when switching units.
+    On the other hand, <code><span class="numbat-value">3</span> <span class="numbat-unit">months</span> + <span class="numbat-value">2</span> <span class="numbat-unit">lightyears</span></code> is <em>ill</em>-typed, because the right-hand side is of type <code class="numbat-type-identifier">Length</code>.
+    You can change &lsquo;years&rsquo; to &lsquo;lightyears&rsquo; in the example above to see the resulting compiler error.
     </p>
 
+    <p>
+    Before we describe the type system in more detail, let's look at two simple examples. The first program
+    computes the oscillation period of a (mathematical) pendulum using the gravitational acceleration
+    <code>g0</code>.
+    Note that you can change the unit of the pendulum length to, say, <code span="numbat-unit">inch</code> without
+    having to change the type annotations. This is in contrast to most physical-computation libraries in other
+    programming languages that typically lift <em>units</em> &mdash; not the physical dimensions &mdash; to the type level.
 
-    <div id="editor2" class="code-editor">let pendulum_length = 30 cm
-let t_oscillation = 2 pi sqrt(pendulum_length / g0)
+    Also, note that you can completely remove the explicit <code><span class="ace_operator">:</span> <span class="numbat-type-identifier">Type</span></code> annotations and let the compiler infer the types:
+    </p>
 
-print("Oscillation period: {t_oscillation}")</div>
+    <div id="editor2" class="code-editor">let pendulum_length: Length = 30 cm
+let t_oscillation: Time = 2 π sqrt(pendulum_length / g0)
+
+t_oscillation</div>
     <pre id="output2" class="numbat-output"></pre>
 
+    <p>
+        The second example demonstrates how you specify custom types using the <code span="ace_keyword">dimension</code>
+        keyword.
+    </p>
 
-<p>The following program calculates and prints the flow rate in a pipe
-using the Hagen-Poiseuille equation. It assumes the dynamic
-viscosity of water and allows for inputs of pipe radius,
-pipe length, and pressure difference.</p>
+    <div id="editor3" class="code-editor">dimension BMI = Mass / Length^2
 
-    <div id="editor3" class="code-editor">let μ_water: DynamicViscosity = 1 mPa·s
+fn body_mass_index(mass: Mass, height: Length) -> BMI =
+  round(mass / height^2 -> kg / m^2)
 
-fn flow_rate(radius: Length, length: Length, Δp: Pressure) -&gt; FlowRate =
-    π × radius^4 × Δp / (8 μ_water × length)
-
-let pipe_radius = 1 cm
-let pipe_length = 10 m
-let Δp = 0.1 bar
-
-let q = flow_rate(pipe_radius, pipe_length, Δp)
-
-q × 30 min -&gt; l</div>
+print(body_mass_index(69 kg, 1.65 m))
+print(body_mass_index(170 lbs, 5 ft + 4 in))</div>
     <pre id="output3" class="numbat-output"></pre>
 
 
@@ -59,10 +66,10 @@ q × 30 min -&gt; l</div>
 </article>
 
 
-    <p>
-        Numbat is open source. It is available both as a cross platform command-line application
-        as well as a web version (<a href="https://numbat.dev">http://numbat.dev</a>).
-    </p>
+    <!-- <p> -->
+    <!--     Numbat is open source. It is available both as a cross platform command-line application -->
+    <!--     as well as a web version (<a href="https://numbat.dev">http://numbat.dev</a>). -->
+    <!-- </p> -->
 
     <script type="module" src="index.js"></script>
 </body>
